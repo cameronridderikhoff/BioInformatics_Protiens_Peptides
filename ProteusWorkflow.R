@@ -1,6 +1,6 @@
 # To see some information pertaining to the following code,
 # Run the command:
-# vignette("proteus", package="proteus")
+# >vignette("proteus", package="proteus")
 # The following code is from the "Quick Start" Option, and is commented by Cameron Ridderikhoff, 
 # with information from the vignette itself.
 
@@ -42,14 +42,15 @@ prot.MQ <- readProteinGroups("/Users/cameronridderikhoff/Documents/CMPUT399/prot
 
 
 # limma package link: http://bioconductor.org/packages/release/bioc/html/limma.html
-# Before limma is called, intensity data are transformed using log10. To change this to log2, replace with
-# res <- limmaDE(prodat.med, transform,fun=log2)
+# Before limma is called, intensity data are transformed using log2. To change this to log10, replace with
+# res <- limmaDE(prodat.med, transform.fun=log10)
 # Perform differential expression on the normalized protein data
-res <- limmaDE(prot.MQ, transform.fun = log2)
+# This function can only be used on 2 conditions at a time. 
+res <- limmaDE(prot.MQ, conditions = c("Phos", "NO_Phos"))
 
 # plot the results using a live, alterable Volcano Plot:
 # We strongly recommend to build protein annotations before running live functions.
-plotVolcano_live(prodat.med, res)
+plotVolcano_live(prot.MQ, res)
 
 
 
