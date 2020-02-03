@@ -41,4 +41,5 @@ vignettes/*.pdf
 
 #Cameron's .gitignore
 #Python output
-.DSStore/*
+.DS_Store
+proteus_data/*
