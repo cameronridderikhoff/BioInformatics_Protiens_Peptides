@@ -7,38 +7,18 @@
 # libary(x) tells R what library, or set of functions, it needs to use. Here we are using proteus, so we must include it.
 library(proteus)
 
-# "read" the evidence.txt file from MaxQuant (here, "read" simply means bring it into R)
-#evidenceFile <- system.file("extdata", "evidence.txt.gz", package="proteusLabelFree")
-# turn the evidenceFile into something that proteus can use, by calling the readEvidenceFile function
-#evi <- readEvidenceFile(evidenceFile)
-
-# read the metadata file that has been created **BY THE USER**
-#metadataFile <- system.file("extdata", "metadata.txt", package="proteusLabelFree")
-# turn the metadataFile into something that proteus can use
-#meta2 <- read.delim(metadataFile, header=TRUE, sep="\t")
-
-# call the makePeptideTable function to create a peptide data object from the evidence and metadata
-#pepdat <- makePeptideTable(evi, meta)
-
-# Create a protein dara object from the peptide data object. "For simplicity, we assign peptides to proteins based on the Leading Razor Protein."
-#prodat <- makeProteinTable(pepdat)
-
-# Normalize the protein data to account for variation of intensity between samples. The default normalization is to the median.
-#prodat.med <- normalizeData(prodat)
-
-# NOTE: This is to be done INSTEAD of the above, if the proteinGroups file is available.
-# (Section 5.5 Reading MaxQuant’s protein groups file)
-# Read the proteinGroups file from MaxQuant directly
-#proteinGroupsFile <- system.file("extdata", "proteinGroups.txt.gz", package="proteusLabelFree") # this line will pull data from the vignette
-# turn the proteinGroupsFile into something that proteus can use
-#prot.MQ <- readProteinGroups(proteinGroupsFile, meta2)
-
 # read the metadata file
-meta <- read.delim("/Users/cameronridderikhoff/Documents/CMPUT399/proteus_data/practice_data_files/TP_XYZ/txt/meta.txt", header = TRUE, sep = "\t", dec = ".")
-# NOTE: This is to be done INSTEAD of the above, if the proteinGroups file is available.
+meta <- read.delim("/Users/cameronridderikhoff/Documents/CMPUT399/BioInformatics_Protiens_Peptides/proteus_data/practice_data_files/TP_XYZ/txt/meta.txt", header = TRUE, sep = "\t", dec = ".")
+
 # (Section 5.5 Reading MaxQuant’s protein groups file)
 # Read the proteinGroups file from MaxQuant directly, and immediately turn it into something useful for Proteus
-prot.MQ <- readProteinGroups("/Users/cameronridderikhoff/Documents/CMPUT399/proteus_data/practice_data_files/TP_XYZ/txt/proteinGroups.txt", meta)
+prot.MQ <- readProteinGroups("/Users/cameronridderikhoff/Documents/CMPUT399/BioInformatics_Protiens_Peptides/proteus_data/practice_data_files/TP_XYZ/txt/proteinGroups.txt", meta)
+
+
+#DO LOG 2 then plot histogram 
+tab <- log2(prot.MQ$tab)
+plotSampleDistributions(prot.MQ, method = "dist", log.base = 2) #plots histogram plots of the (log2 value? frequency?) of each sample
+plotSampleDistributions(prot.MQ, log.base = 2) #plot box plots of the log2 value of each sample
 
 
 # limma package link: http://bioconductor.org/packages/release/bioc/html/limma.html
@@ -46,11 +26,15 @@ prot.MQ <- readProteinGroups("/Users/cameronridderikhoff/Documents/CMPUT399/prot
 # res <- limmaDE(prodat.med, transform.fun=log10)
 # Perform differential expression on the normalized protein data
 # This function can only be used on 2 conditions at a time. 
-res <- limmaDE(prot.MQ, conditions = c("Phos", "NO_Phos"))
+results_Phos <- limmaDE(prot.MQ, conditions = c("NO_Phos", "Phos"))
+results_Phi <- limmaDE(prot.MQ, conditions = c("NO_Phos", "Phi"))
 
 # plot the results using a live, alterable Volcano Plot:
 # We strongly recommend to build protein annotations before running live functions.
-plotVolcano_live(prot.MQ, res)
+plotVolcano_live(prot.MQ, results_Phos)
+plotVolcano_live(prot.MQ, results_Phi)
 
-
-
+#Plot a line with adjusted p-value threshold of 0.05 
+#Add a column with regular p-value as well (need to alter the limmaDE function from Proteus)
+plotPdist(results_Phi)
+plotPdist(results_Phos)

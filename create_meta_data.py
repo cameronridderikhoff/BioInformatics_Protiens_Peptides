@@ -3,7 +3,7 @@ import string
 meta = open("proteus_data/practice_data_files/TP_XYZ/txt/meta.txt", 'w')
 meta.write("experiment\tmeasure\tsample\tcondition\n")
 
-num_samples = input("Please enter the number of samples: ")
+num_samples = input("Please enter the number of samples per group: ")
 
 conditions = []
 while "e" not in conditions:
