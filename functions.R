@@ -101,3 +101,76 @@ limmaDE_adjust <- function(pdat, formula="~condition", conditions=NULL, transfor
   
   return(res)
 }
+
+
+#'Volcano plot
+#'
+#'\code{plotVolcano} makes a volcano plot from limma results. Uses
+#'\code{\link{stat_binhex}} function from ggplot2 to make a hexagonal heatmap.
+#'
+#'@param res Result table from  \code{\link{limmaDE}}.
+#'@param bins Number of bins for binhex.
+#'@param xmax Upper limit on x-axis. If used, the lower limit is -xmax.
+#'@param ymax Upper limit on y-axis. If used, the lower limit is -ymax.
+#'@param marginal.histograms A logical to add marginal histograms.
+#'@param text.size Text size.
+#'@param show.legend Logical to show legend (colour key).
+#'@param plot.grid Logical to plot grid.
+#'@param binhex Logical. If TRUE, a hexagonal density plot is made, otherwise it
+#'  is a simple point plot.
+#'
+#' @return A \code{ggplot} object.
+#'
+#' @examples
+#' library(proteusLabelFree)
+#' data(proteusLabelFree)
+#' prodat.med <- normalizeData(prodat)
+#' res <- limmaDE(prodat.med)
+#' plotVolcano(res)
+#'
+#'@export
+plotVolcano_pvalue <- function(res, bins=80, xmax=NULL, ymax=NULL, marginal.histograms=FALSE, text.size=12, show.legend=TRUE,
+                        plot.grid=TRUE, binhex=TRUE, pval = 0) {
+  if(binhex & marginal.histograms) {
+    warning("Cannot plot with both binhex=TRUE and marginal.histograms=TRUE. Ignoring binhex.")
+    binhex=FALSE
+  }
+  
+  tr <- attr(res, "transform.fun")
+  conds <- attr(res, "conditions")
+  xlab <- ifelse(is.null(tr), "FC", paste(tr, "FC"))
+  tit <- paste(conds, collapse=":")
+  id <- names(res)[1]
+  
+  g <- ggplot(res, aes_(~logFC, ~-log10(P.Value)))
+  
+  if(binhex) {
+    g <- g + stat_binhex(bins=bins, show.legend=show.legend, na.rm=TRUE) +
+      viridis::scale_fill_viridis(name="count", na.value=NA)
+    #scale_fill_gradientn(colours=c("seagreen","yellow", "red"), name = "count", na.value=NA)
+  } else {
+    g <- g + geom_point(na.rm=TRUE)
+  }
+  
+  if(plot.grid) {
+    g <- g + simple_theme_grid
+  } else {
+    g <- g + simple_theme
+  }
+  
+  #Added by Cameron
+  if (pval != 0) {
+    g <- g + geom_hline(yintercept = pval, linetype = "dashed")
+  }
+  #End added by Cameron
+  g <- g + geom_vline(colour='red', xintercept=0) +
+    theme(text = element_text(size=text.size)) +
+    labs(x=xlab, y="-log10 P", title=tit)
+  
+  
+  if(!is.null(xmax)) g <- g + scale_x_continuous(limits = c(-xmax, xmax), expand = c(0, 0))
+  if(!is.null(ymax) ) g <- g + scale_y_continuous(limits = c(0, ymax), expand = c(0, 0))
+  
+  if(marginal.histograms) g <- ggExtra::ggMarginal(g, size=10, type = "histogram", xparams=list(bins=100), yparams=list(bins=50))
+  return(g)
+}

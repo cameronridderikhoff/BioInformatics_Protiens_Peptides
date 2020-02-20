@@ -13,7 +13,7 @@ library(cowplot)
 library(rlist)
 library(dplyr)
 
-samples <- list(first = "NO_Phos", second = "Phos", third = "Phi")
+samples <- c("NO_Phos", "Phos", "Phi")
 control_sample <- "NO_Phos"
 num_trials <- 4
 
@@ -61,14 +61,14 @@ results_None <- array(dim = length(samples))
 for (i in 1:length(samples)) {
   if (samples[i] != control_sample) {
     
-    results_BH[i] <- limmaDE_adjust(prot.MQ, conditions = c(control_sample, samples[i]), limma_adjust = "BH")
+    results_BH[i] <- limmaDE_adjust(prot.PG, conditions = c(control_sample, samples[i]), limma_adjust = "BH")
     # plot the results using a live, alterable Volcano Plot:
     # "We strongly recommend to build protein annotations before running live functions."
-    plotVolcano_live(prot.MQ, results_BH[i])
+    plotVolcano_pvalue(results_BH[i], pval = 0.05)
     plotPdist(results_BH[i])
     # Changing the limma_adjust to none seems to have little to no effect on the result.
-    results_None[i] <- limmaDE_adjust(prot.MQ, conditions = c(control_sample, samples[i]), limma_adjust = "none")
-    plotVolcano_live(prot.MQ, results_None[i])
+    results_None[i] <- limmaDE_adjust(prot.PG, conditions = c(control_sample, samples[i]), limma_adjust = "none")
+    plotVolcano_pvalue(results_None[i], pval = 0.05)
   }
 }
 
