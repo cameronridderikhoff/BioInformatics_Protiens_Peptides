@@ -56,19 +56,22 @@ for (sample in samples) {
 # res <- limmaDE(prodat.med, transform.fun=log10)
 # Perform differential expression on the normalized protein data
 # This function can only be used on 2 conditions at a time. 
-results_BH <- array(dim = length(samples))
-results_None <- array(dim = length(samples))
+
 for (i in 1:length(samples)) {
   if (samples[i] != control_sample) {
     
-    results_BH[i] <- limmaDE_adjust(prot.PG, conditions = c(control_sample, samples[i]), limma_adjust = "BH")
+    results_BH <- limmaDE_adjust(prot.PG, conditions = c(control_sample, samples[i]), limma_adjust = "BH")
     # plot the results using a live, alterable Volcano Plot:
     # "We strongly recommend to build protein annotations before running live functions."
-    plotVolcano_pvalue(results_BH[i], pval = 0.05)
-    plotPdist(results_BH[i])
+    plot <- plotVolcano_pvalue(results_BH, pval = 0.05)
+    ggsave(plot, file=paste('/Users/cameronridderikhoff/Documents/CMPUT399/BioInformatics_Protiens_Peptides/outputs/',
+                      samples[i], "_", "Results_BH","_VolcanoPlot.pdf", sep=''), scale=2)
+    #plotPdist(results_BH[i])
     # Changing the limma_adjust to none seems to have little to no effect on the result.
-    results_None[i] <- limmaDE_adjust(prot.PG, conditions = c(control_sample, samples[i]), limma_adjust = "none")
-    plotVolcano_pvalue(results_None[i], pval = 0.05)
+    results_None <- limmaDE_adjust(prot.PG, conditions = c(control_sample, samples[i]), limma_adjust = "none")
+    plot <- plotVolcano_pvalue(results_None, pval = 0.05)
+    ggsave(plot, file=paste('/Users/cameronridderikhoff/Documents/CMPUT399/BioInformatics_Protiens_Peptides/outputs/',
+                            samples[i], "_", "Results_None","_VolcanoPlot.pdf", sep=''), scale=2)
   }
 }
 

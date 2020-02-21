@@ -1,4 +1,19 @@
 # Most of this code is from Proteus, and has been modified for Dr. Glen Ulrig at the University of Alberta by Cameron Ridderikhoff
+simple_theme <- ggplot2::theme_bw() +
+  ggplot2::theme(
+    panel.border = ggplot2::element_blank(),
+    panel.grid.major = ggplot2::element_blank(),
+    panel.grid.minor = ggplot2::element_blank(),
+    axis.line = ggplot2::element_line(colour = "black")
+  )
+simple_theme_grid <- ggplot2::theme_bw() +
+  ggplot2::theme(
+    panel.border = ggplot2::element_blank(),
+    panel.grid.major = ggplot2::element_line(colour = "grey90"),
+    panel.grid.minor = ggplot2::element_line(colour = "grey95"),
+    axis.line = ggplot2::element_line(colour = "black")
+  )
+cbPalette <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
 #' Simple differential expression with limma
 #'
@@ -160,7 +175,7 @@ plotVolcano_pvalue <- function(res, bins=80, xmax=NULL, ymax=NULL, marginal.hist
   
   #Added by Cameron
   if (pval != 0) {
-    g <- g + geom_hline(yintercept = pval, linetype = "dashed")
+    g <- g + geom_hline(yintercept = exp(pval), linetype = "dashed")
   }
   #End added by Cameron
   g <- g + geom_vline(colour='red', xintercept=0) +
