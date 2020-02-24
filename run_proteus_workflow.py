@@ -39,4 +39,7 @@ meta.close()
 print("Metadata file successfully generated.")
 
 return_code = subprocess.call("Rscript --vanilla -e 'source(\"ProteusWorkflow.R\")'" + R_args, shell=True)
-print("Script completed with code: " + str(return_code))
+if return_code != 0:
+    print("Script failed with code: " + str(return_code))
+else:
+    print("Script passed with code: " + str(return_code))

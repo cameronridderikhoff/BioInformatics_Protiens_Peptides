@@ -20,8 +20,7 @@ conditions <- args[-(1:8)]
 control_condition <- args[8]
 num_samples <- 4
 
-print(conditions)
-print(control_condition)
+
 #SECTION: Read input data
 # read the metadata file
 meta <- read.delim("/Users/cameronridderikhoff/Documents/CMPUT399/BioInformatics_Protiens_Peptides/proteus_data/practice_data_files/TP_XYZ/txt/meta.txt", header = TRUE, sep = "\t", dec = ".")
@@ -80,6 +79,10 @@ for (i in 1:length(conditions)) {
   }
 }
 
-#Plot a line with adjusted p-value threshold of 0.05 
-
 #Add a column with regular p-value as well (need to alter the limmaDE function from Proteus)
+#Might be called "p-value" for uncorrected and q-value for corrected
+#Volcano plot function only plots P-value, so we need to check the data frame
+
+#Make a spreadsheet of limma_adjusted data (CSV) 
+#we want: NO_Phos median, Phos average, Phi average, AGI, Description
+
