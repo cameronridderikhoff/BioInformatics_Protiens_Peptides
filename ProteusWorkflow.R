@@ -61,6 +61,11 @@ for (condition in conditions) {
   i <- i + length(num_samples)
 }
 
+#save the pheatmap to a png
+pheatmap(prot.dat, show_rownames = FALSE, filename = paste('/Users/cameronridderikhoff/Documents/CMPUT399/BioInformatics_Protiens_Peptides/outputs/',
+                                            conditions[i], "_", "Results_BH", "_Pheatmap.png", sep=''))
+
+
 # limma package link: http://bioconductor.org/packages/release/bioc/html/limma.html
 # Before limma is called, intensity data are transformed using log2. To change this to log10, replace with
 # res <- limmaDE(prodat.med, transform.fun=log10)
@@ -81,9 +86,6 @@ for (i in 1:length(conditions)) {
     plot <- plotVolcano_pvalue(results_BH, pval = 0.05, pval_type = "adjusted")
     ggsave(plot, file=paste('/Users/cameronridderikhoff/Documents/CMPUT399/BioInformatics_Protiens_Peptides/outputs/',
                             conditions[i], "_", "Results_BH", "_adjusted_pvalue", "_VolcanoPlot.png", sep=''), scale=2)
-    
-    pheatmap(results_BH, filename = paste('/Users/cameronridderikhoff/Documents/CMPUT399/BioInformatics_Protiens_Peptides/outputs/',
-                                                      conditions[i], "_", "Results_BH", "_Pheatmap.png", sep=''))
     
     # Changing the limma_adjust to none seems to have little to no effect on the result.
     #results_None <- limmaDE_adjust(prot.PG, conditions = c(control_condition, conditions[i]), limma_adjust = "none")
