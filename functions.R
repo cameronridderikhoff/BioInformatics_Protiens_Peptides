@@ -145,19 +145,24 @@ limmaDE_adjust <- function(pdat, formula="~condition", conditions=NULL, transfor
 #'
 #'@export
 plotVolcano_pvalue <- function(res, bins=80, xmax=NULL, ymax=NULL, marginal.histograms=FALSE, text.size=12, show.legend=TRUE,
-                        plot.grid=TRUE, binhex=TRUE, pval = 0) {
+                        plot.grid=TRUE, binhex=TRUE, pval = 0, pval_type = "unadjusted") {
   if(binhex & marginal.histograms) {
     warning("Cannot plot with both binhex=TRUE and marginal.histograms=TRUE. Ignoring binhex.")
     binhex=FALSE
   }
-  
+
   tr <- attr(res, "transform.fun")
   conds <- attr(res, "conditions")
   xlab <- ifelse(is.null(tr), "FC", paste(tr, "FC"))
   tit <- paste(conds, collapse=":")
   id <- names(res)[1]
   
-  g <- ggplot(res, aes_(~logFC, ~-log10(P.Value)))
+  if (pval_type == "unadjusted")
+    g <- ggplot(res, aes_(~logFC, ~-log10(P.Value)))
+  else if (pval_type == "adjusted")
+    g <- ggplot(res, aes_(~logFC, ~-log10(adj.P.Val)))
+  else
+    stop("Incorrect p-value type. Possible values: adjusted, unadjusted")
   
   if(binhex) {
     g <- g + stat_binhex(bins=bins, show.legend=show.legend, na.rm=TRUE) +
