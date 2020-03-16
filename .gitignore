@@ -43,3 +43,4 @@ vignettes/*.pdf
 #Python output
 .DS_Store
 proteus_data/*
+Outputs/*

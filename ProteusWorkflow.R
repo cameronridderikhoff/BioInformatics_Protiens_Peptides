@@ -19,7 +19,7 @@ args <- commandArgs()
 #exclude the entries not pertaining to input values
 conditions <- args[-(1:8)]
 control_condition <- args[8]
-num_samples <- 4
+num_samples <- args[9]
 
 
 #SECTION: Read input data
@@ -43,7 +43,41 @@ plot <- plotSampleDistributions(prot.PG, log.base = 2) #plots box plots of the i
 ggsave(plot, file=paste('/Users/cameronridderikhoff/Documents/CMPUT399/BioInformatics_Protiens_Peptides/outputs/',
                         "log2boxplot", ".png", sep=''), scale=2)
 
-#perform log2 transformation on the data so we acn do scatterplots
+#remove the proteins that don't show up in a minimum of 2 samples in one condition
+dat <- prot.PG$tab
+#TEST
+dat <- dat[4437:4561,]
+#TEST
+#subscripting is wrong, currently condition*sample, but will not work for entries past condition=1
+to_remove <- c()
+num_conditions <- length(conditions)
+for (i in 1:nrow(dat)) {
+  in_sample <- 0
+  keep_row <- FALSE
+  #browser()
+  for (cond_samp in 1:(num_conditions*num_samples)) {
+    if (!(is.na(dat[i, cond_samp]) | is.nan(dat[i, cond_samp]))) {
+      in_sample <- in_sample + 1
+    }
+    if(in_sample >= 2) {
+      keep_row <- TRUE
+      break
+    }
+    else if (cond_samp %% num_samples == 0){
+      in_sample <- 0
+    }
+  }
+  
+  if (keep_row != TRUE) {
+    to_remove <- c(to_remove, i)
+  }
+}
+if (length(to_remove) > 0) {
+  dat <- dat[-to_remove, ]
+}
+prot.PG$tab <- dat
+
+#perform log2 transformation on the data so we can do scatterplots
 prot.dat <- data.frame(log2(prot.PG$tab))
 i <- 0
 for (condition in conditions) {
