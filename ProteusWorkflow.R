@@ -45,16 +45,12 @@ ggsave(plot, file=paste('/Users/cameronridderikhoff/Documents/CMPUT399/BioInform
 
 #remove the proteins that don't show up in a minimum of 2 samples in one condition
 dat <- prot.PG$tab
-#TEST
-dat <- dat[4437:4561,]
-#TEST
-#subscripting is wrong, currently condition*sample, but will not work for entries past condition=1
 to_remove <- c()
 num_conditions <- length(conditions)
 for (i in 1:nrow(dat)) {
   in_sample <- 0
   keep_row <- FALSE
-  #browser()
+
   for (cond_samp in 1:(num_conditions*num_samples)) {
     if (!(is.na(dat[i, cond_samp]) | is.nan(dat[i, cond_samp]))) {
       in_sample <- in_sample + 1
