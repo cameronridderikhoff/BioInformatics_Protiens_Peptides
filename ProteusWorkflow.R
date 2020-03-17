@@ -92,6 +92,7 @@ for (condition in conditions) {
 }
 
 #save the pheatmap to a png
+prot.dat[is.na(prot.dat)] <- 0
 pheatmap(prot.dat, show_rownames = FALSE, filename = paste('/Users/cameronridderikhoff/Documents/CMPUT399/BioInformatics_Protiens_Peptides/outputs/',
                                             conditions[i], "_", "Results_BH", "_Pheatmap.png", sep=''))
 
@@ -108,6 +109,7 @@ for (i in 1:length(conditions)) {
     results_BH <- limmaDE_adjust(prot.PG, conditions = c(control_condition, conditions[i]), limma_adjust = "BH")
     write.csv(results_BH, file = paste('/Users/cameronridderikhoff/Documents/CMPUT399/BioInformatics_Protiens_Peptides/outputs/',
                                        "results", control_condition, "_vs_", conditions[i], ".csv"))
+    
     # plot the results using a Volcano Plot and save to a png:
     plot <- plotVolcano_pvalue(results_BH, pval = 0.05, pval_type = "unadjusted")
     ggsave(plot, file=paste('/Users/cameronridderikhoff/Documents/CMPUT399/BioInformatics_Protiens_Peptides/outputs/',

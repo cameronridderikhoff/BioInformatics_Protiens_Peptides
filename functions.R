@@ -157,10 +157,19 @@ plotVolcano_pvalue <- function(res, bins=80, xmax=NULL, ymax=NULL, marginal.hist
   tit <- paste(conds, collapse=":")
   id <- names(res)[1]
   
-  if (pval_type == "unadjusted")
-    g <- ggplot(res, aes_(~logFC, ~-log10(P.Value)))
-  else if (pval_type == "adjusted")
+
+  if (pval_type == "unadjusted") {
+    #select the top 10 results and label them separately
+    #top10 <- res[order(-res$P.Value), ] 
+    #top10 <- top10[1:10,] #change this number if you want to have more than the top ten be labeled
+    g <- ggplot(res, aes_(~logFC, ~-log10(P.Value)))#, label = rownames(top10)
+  }
+  else if (pval_type == "adjusted") {
+    #select the top 10 results and label them separately
+    #top10 <- res[order(-res$adj.P.Value), ]
+    #top10 <- top10[1:10,] #change this number if you want to have more than the top ten be labeled
     g <- ggplot(res, aes_(~logFC, ~-log10(adj.P.Val)))
+  }
   else
     stop("Incorrect p-value type. Possible values: adjusted, unadjusted")
   
