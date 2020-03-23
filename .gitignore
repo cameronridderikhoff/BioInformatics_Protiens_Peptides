@@ -41,6 +41,7 @@ vignettes/*.pdf
 
 #Cameron's .gitignore
 #Python output
+__pycache__/
 .DS_Store
 proteus_data/*
 Outputs/*

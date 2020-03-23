@@ -24,9 +24,9 @@ source("functions.R")
 
 # import the conditions and number of samples from the Python script that runs this workflow "run_proteus_workflow.py"
 args <- commandArgs()
-conditions <- args[-(1:8)] # exclude the entries not pertaining to input values
-control_condition <- args[8] # the control condition is located at index 8
-num_samples <- args[9] # the number of samples is located at index 9
+conditions <- args[-(1:9)] # exclude the entries not pertaining to input values
+control_condition <- args[9] # the control condition is located at index 9
+num_samples <- strtoi(args[8]) # the number of samples is located at index 8, turn it from a string to an integer.
 
 
 #SECTION: Read input data
