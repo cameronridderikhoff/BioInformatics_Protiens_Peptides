@@ -1,18 +1,19 @@
 import string, re
 
-def alter_useful_peptide_names(file_name):
-    cutoff = input("Please enter the cutoff percentage for useful peptide probability: ")
+def center_peptides(file_name):
+    cutoff = input("Please enter the cutoff percentage for peptide probability: ")
     while not re.match("^[0-9]*$", cutoff):
         if cutoff == 'q':
             exit()
         print("The percentage must be an integer. Do not include a '%' symbol.")
-        cutoff = input("Please enter the cutoff percentage for useful peptide probability: ")
+        cutoff = input("Please enter the cutoff percentage for peptide probability: ")
     cutoff = float(cutoff)
-    altered_file = open("outputs/peptides_altered.txt", "w")
+    altered_file = open("outputs/peptides_centered.txt", "w")
     with open(file_name) as file_obj:
         i=0
         pep_index = None
         prot_index = None
+        sequence_index = None
         for line in file_obj:
             cols = line.split("\t")
             if i==0:
@@ -21,32 +22,30 @@ def alter_useful_peptide_names(file_name):
                         pep_index = j
                     if cols[j] == "Protein":
                         prot_index = j
+                    if cols[j] == "Sequence window":
+                        sequence_index = j
                 i = i + 1
                 altered_file.write(line)
                 continue
             
-            percentages = cols[pep_index].split("(")
-            if len(percentages) < 2: #if there is no phosphorylation site in this 
-                continue
+            line_to_write = cols[prot_index] + "\t" + cols[pep_index] + "\t" + cols[sequence_index]
             pass_cutoff= False
-            for percentage in percentages:
+            phos_indices = []
+            pep_seq = cols[pep_index]
+            for j in range(0, len(pep_seq)):
+                if pep_seq[j] == "(":
+                    phos_indices.append(j-1)
                 #ensure the peptide has a valid % number
-                percentage = percentage.split(")") #remove closing bracket
+                percentage = percentages[j].split(")") #remove closing bracket
                 if len(percentage) >= 2:
                     percentage = percentage[0] # now the first index has the number itself, eg. ["0.95", "..."]
                     percentage = float(percentage) # turn the string into a number. eg. "0.95" becomes 0.95
                     if (percentage*100) >= cutoff:
                         pass_cutoff = True
+                        peptide_percentage_indices.append(j)
 
-            line_to_write = ""
-            if pass_cutoff:
-                for j in range(0, len(cols)):
-                    if (j == pep_index):
-                        line_to_write = line_to_write + cols[prot_index] + "_" + cols[pep_index] + "\t"
-                    else:
-                        line_to_write = line_to_write + cols[j] + "\t"
-            else:
-                line_to_write = line
+            if not pass_cutoff:
+                line_to_write = None
 
             while re.match("^[\s]*$", line_to_write[-1]):
                 line_to_write = line_to_write[:-1]
@@ -55,4 +54,4 @@ def alter_useful_peptide_names(file_name):
             i = i + 1
     altered_file.close()
 
-alter_useful_peptide_names("proteus_data/practice_data_files/TP_XYZ/txt/Phospho (STY)Sites.txt")
+center_peptides("proteus_data/practice_data_files/TP_XYZ/txt/Phospho (STY)Sites.txt")
