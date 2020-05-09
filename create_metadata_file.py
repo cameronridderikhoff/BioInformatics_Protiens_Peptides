@@ -6,7 +6,7 @@ import re # for regular expressions
 #          It is of the form: [num_samples, control_condition, condition1, condition2, ..., conditionX]
 def create_metadata_file():
     # Generate the file if it does not exist, or overwrite the data that is there already
-    meta = open("proteus_data/practice_data_files/TP_XYZ/txt/meta.txt", 'w')
+    meta = open("data/meta.txt", 'w')
     # Proteus requires the first row to be exactly like this:
     # experiment   measure   sample   condition
     meta.write("experiment\tmeasure\tsample\tcondition\n")
