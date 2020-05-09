@@ -15,6 +15,9 @@ def center_peptides(file_name):
         prot_index = None
         sequence_index = None
         for line in file_obj:
+            if i > 3:
+                altered_file.close()
+                quit()
             cols = line.split("\t")
             if i==0:
                 for j in range(0, len(cols)):
@@ -32,20 +35,18 @@ def center_peptides(file_name):
             pass_cutoff= False
             phos_indices = []
             pep_seq = cols[pep_index]
+            pep_string = ""
+            k=0
             for j in range(0, len(pep_seq)):
                 if pep_seq[j] == "(":
-                    phos_indices.append(j-1)
-                #ensure the peptide has a valid % number
-                percentage = percentages[j].split(")") #remove closing bracket
-                if len(percentage) >= 2:
-                    percentage = percentage[0] # now the first index has the number itself, eg. ["0.95", "..."]
-                    percentage = float(percentage) # turn the string into a number. eg. "0.95" becomes 0.95
-                    if (percentage*100) >= cutoff:
-                        pass_cutoff = True
-                        peptide_percentage_indices.append(j)
+                    phos_indices.append(k)
+                if re.match("^[A-Z]*$", pep_seq[j]):
+                    pep_string = pep_string + pep_seq[j]
+                    k+=1
 
-            if not pass_cutoff:
-                line_to_write = None
+            seq_window = cols[sequence_index]
+            while seq_window[6:len(pep_string) + 6] != pep_string:
+                seq_window = seq_window[1:]
 
             while re.match("^[\s]*$", line_to_write[-1]):
                 line_to_write = line_to_write[:-1]
