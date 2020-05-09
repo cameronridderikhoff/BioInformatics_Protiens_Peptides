@@ -43,5 +43,5 @@ vignettes/*.pdf
 #Python output
 __pycache__/
 .DS_Store
-proteus_data/*
-Outputs/*
+data/*
+outputs/*
