@@ -28,15 +28,15 @@ control_condition <- args[9] # The control condition is located at index 9
 num_samples <- strtoi(args[8]) # The number of samples is located at index 8, turn it from a string to an integer
 
 # Read the metadata file
-meta <- read.delim("data/meta.txt", header = TRUE, sep = "\t", dec = ".")
+meta <- read.delim("data_ptm/meta.txt", header = TRUE, sep = "\t", dec = ".")
 
 # (Section 2.2 Reading evidence file)
 # Read the evidence file from MaxQuant directly, and immediately turn it into something useful for Proteus
-evi.filename <- "data/evidence.txt"
+evi.filename <- "data_ptm/evidence.txt"
 evi <- readEvidenceFile(evi.filename)
 
 # Open peptides_altered.txt
-pepToKeep <- read.delim("outputs/peptides_altered.txt")
+pepToKeep <- read.delim("outputs_ptm/peptides_altered.txt")
 # Extract the peptide sequences
 pepToKeep.names <- data.frame(x = pepToKeep$Phospho..STY..Probabilities)
 pepNames <- pepToKeep.names %>% separate(x, c(NA, "Peptide"), "_")
@@ -55,21 +55,21 @@ pepdat$tab <- peptab
 
 # Plot histogram, dendrogram and boxplot of log2 transformed data 
 plot <- plotSampleDistributions(pepdat, method = "dist", log.base = 2) #plots histogram plots of the intensities/ratios of each sample
-ggsave(plot, file="outputs/peptide_log2_histogram.png", scale=2)
+ggsave(plot, file="outputs_ptm/peptide_log2_histogram.png", scale=2)
 
 plot <- plotSampleDistributions(pepdat, log.base = 2) #plots box plots of the intensities/ratios of each sample
-ggsave(plot, file="outputs/peptide_log2_boxplot.png", scale=2)
+ggsave(plot, file="outputs_ptm/peptide_log2_boxplot.png", scale=2)
 # Plot a dendrogram of the peptide data set
 plot <- plotClustering(pepdat) 
-ggsave(plot, file="outputs/peptide_dendrogram.png", scale=2)
+ggsave(plot, file="outputs_ptm/peptide_dendrogram.png", scale=2)
 
 # Plot Jaccard Similarity of data
 plot <- plotDetectionSimilarity(pepdat, bin.size=0.02)
-ggsave(plot, file="outputs/peptide_jaccard_similarity.png", scale=2)
+ggsave(plot, file="outputs_ptm/peptide_jaccard_similarity.png", scale=2)
 
 # Plot the Pearson’s correlation coefficient in a Distance matrix
 plot <- plotDistanceMatrix(pepdat)
-ggsave(plot, file="outputs/peptide_distance_matrix.png", scale=2)
+ggsave(plot, file="outputs_ptm/peptide_distance_matrix.png", scale=2)
 
 # Perform log2 transformation on the data so we can do scatterplots
 peptab <- data.frame(peptab)
@@ -82,7 +82,7 @@ for (condition in conditions) { # For every condition that we have:
         # Create the scatterplot of the log2 transformed data
         plot <- ggplot(peptab, aes(pull(peptab, sample), pull(peptab, sample_against))) + geom_point()
         # Save plots as .png
-        ggsave(plot, file=paste("outputs/peptide_", condition, "_sample", sample, 
+        ggsave(plot, file=paste("outputs_ptm/peptide_", condition, "_sample", sample, 
                                 "_vs_", sample_against, "_scatter.png", sep=''), scale=2)
       }
     }
@@ -91,7 +91,7 @@ for (condition in conditions) { # For every condition that we have:
 
 # Save the pheatmap to a .png
 peptab[is.na(peptab)] <- 0 # n/a's, must be 0's for pheatmap to work
-pheatmap(peptab, show_rownames = FALSE, filename = "outputs/peptide_pheatmap.png")
+pheatmap(peptab, show_rownames = FALSE, filename = "outputs_ptm/peptide_pheatmap.png")
 
 # limma package link: http://bioconductor.org/packages/release/bioc/html/limma.html
 # Before limma is called, intensity data are transformed using log2. To change this to log10, replace with
@@ -105,21 +105,21 @@ for (i in 1:length(conditions)) { # For each condition:
     # Call limmaDE_adjust to get p-values for the differential expression altered data
     results_BH <- limmaDE_adjust(pepdat, conditions = c(control_condition, conditions[i]), limma_adjust = "BH")
     # Save the results in a csv file.
-    write.csv(results_BH, file = paste("outputs/peptide_results", 
+    write.csv(results_BH, file = paste("outputs_ptm/peptide_results", 
                                        control_condition, "_vs_", conditions[i], ".csv"))
     
     # Plot the unadjusted p values using a Volcano Plot and save to a png and a pdf:
     plot <-  plotVolcano_pvalue(results_BH, pval = 0.05, pval_type = "unadjusted")
-    ggsave(plot, file=paste("outputs/peptide_", conditions[i], 
+    ggsave(plot, file=paste("outputs_ptm/peptide_", conditions[i], 
                             "_BH_unadjusted_p_volcano.png", sep=''), scale=2)
-    ggsave(plot, file=paste("outputs/peptide_", conditions[i],
+    ggsave(plot, file=paste("outputs_ptm/peptide_", conditions[i],
                             "_BH_unadjusted_p_volcano.pdf", sep=''), scale=2)
     
     # Plot the adjusted p values using a Volcano Plot and save to a png and a pdf:
     plot <- plotVolcano_pvalue(results_BH, pval = 0.05, pval_type = "adjusted")
-    ggsave(plot, file=paste("outputs/peptide_", conditions[i], 
+    ggsave(plot, file=paste("outputs_ptm/peptide_", conditions[i], 
                             "_BH_adjusted_p_volcano.png", sep=''), scale=2)
-    ggsave(plot, file=paste("outputs/peptide_", conditions[i],
+    ggsave(plot, file=paste("outputs_ptm/peptide_", conditions[i],
                             "_BH_adjusted_p_volcano.pdf", sep=''), scale=2)
     }
 }
