@@ -4,14 +4,6 @@
 # Run the command:
 # >vignette("proteus", package="proteus")
 
-#########
-# NOTE TO USERS:
-# You MUST ensure the following line contains ALL of the directory to get to, and include, "base".
-# Eg. directory <- "/Users/yourusername/Documents/folder1/base"
-# You MUST NOT add a trailing "/" at the end of the line, or this will not work.
-# Eg. directory <- "/Users/yourusername/Documents/folder1/base/" WILL NOT WORK.
-directory <- ""
-#########
 
 #SECTION: Imports
 # libary(x) tells R what library, or set of functions, it needs to use.
@@ -41,11 +33,11 @@ num_samples <- strtoi(args[8]) # the number of samples is located at index 8, tu
 #SECTION: Read input data
 
 # Read the metadata file
-meta <- read.delim(paste(directory, "/data/meta.txt", sep = ""), header = TRUE, sep = "\t", dec = ".")
+meta <- read.delim("data/meta.txt", header = TRUE, sep = "\t", dec = ".")
 
 # (Section 5.5 Reading MaxQuant’s protein groups file)
 # Read the proteinGroups file from MaxQuant directly, and immediately turn it into something useful for Proteus
-prot.filename <- paste(directory, "/data/proteinGroups.txt", sep = "")
+prot.filename <- "data/proteinGroups.txt"
 prot.PG <- readProteinGroups(prot.filename, meta) # PG stands for Protein Groups
 
 
@@ -87,10 +79,10 @@ prot.PG$tab <- dat # To make use of the shorthand we change prot.PG$tab to have 
 
 # Plot histogram and boxplot of log2 transformed data 
 plot <- plotSampleDistributions(prot.PG, method = "dist", log.base = 2) # Plot histogram plots of the intensities/ratios of each sample
-ggsave(plot, file=paste(directory, "/outputs/protein_log2_histogram.png", sep=''), scale=2)
+ggsave(plot, file="outputs/protein_log2_histogram.png", scale=2)
 
 plot <- plotSampleDistributions(prot.PG, log.base = 2) # Plot box plots of the intensities/ratios of each sample
-ggsave(plot, file=paste(directory, "/outputs/protein_log2_boxplot.png", sep=''), scale=2)
+ggsave(plot, file="outputs/protein_log2_boxplot.png", scale=2)
 
 
 # Perform log2 transformation on the data so we can do scatterplots
@@ -104,7 +96,7 @@ for (condition in conditions) { # For every condition that we have:
         # Create the scatterplot of the log2 transformed data
         plot <- ggplot(prot.dat, aes(pull(prot.dat, sample), pull(prot.dat, sample_against))) + geom_point()
         # Save plots as .png
-        ggsave(plot, file=paste(directory, "/outputs/protein_", condition, "_sample", sample, 
+        ggsave(plot, file=paste("outputs/protein_", condition, "_sample", sample, 
                                 "_vs_", sample_against, ".png", sep=''), scale=2)
       }
     }
@@ -113,7 +105,7 @@ for (condition in conditions) { # For every condition that we have:
 
 # Save the pheatmap to a .png
 prot.dat[is.na(prot.dat)] <- 0 # n/a's, must be 0's for pheatmap to work
-pheatmap(prot.dat, show_rownames = FALSE, filename = paste(directory, "/outputs/proteins_pheatmap.png", sep=''))
+pheatmap(prot.dat, show_rownames = FALSE, filename = "outputs/proteins_pheatmap.png")
 
 
 # Limma package link: http://bioconductor.org/packages/release/bioc/html/limma.html
@@ -128,21 +120,21 @@ for (i in 1:length(conditions)) { # For each condition:
     # Call limmaDE_adjust to get p-values for the differential expression altered data
     results_BH <- limmaDE_adjust(prot.PG, conditions = c(control_condition, conditions[i]), limma_adjust = "BH")
     # Save the results in a csv file.
-    write.csv(results_BH, file = paste(directory, "/outputs/protein_results", 
+    write.csv(results_BH, file = paste("outputs/protein_results", 
                                        control_condition, "_vs_", conditions[i], ".csv"))
     
     # Plot the unadjusted p values using a Volcano Plot and save to a png and a pdf:
     plot <-  plotVolcano_pvalue(results_BH, pval = 0.05, pval_type = "unadjusted")
-    ggsave(plot, file=paste(directory, "/outputs/protein_", conditions[i], 
+    ggsave(plot, file=paste("outputs/protein_", conditions[i], 
                             "_BH_unadjusted_p_volcano.png", sep=''), scale=2)
-    ggsave(plot, file=paste(directory, "/outputs/protein_", conditions[i], 
+    ggsave(plot, file=paste("outputs/protein_", conditions[i], 
                             "_BH_unadjusted_p_volcano.pdf", sep=''), scale=2)
     
     # Plot the adjusted p values using a Volcano Plot and save to a png and a pdf:
     plot <- plotVolcano_pvalue(results_BH, pval = 0.05, pval_type = "adjusted")
-    ggsave(plot, file=paste(directory, "/outputs/protein_", conditions[i],
+    ggsave(plot, file=paste("outputs/protein_", conditions[i],
                             "_BH_adjusted_pv_volcano.png", sep=''), scale=2)
-    ggsave(plot, file=paste(directory, "/outputs/protein_", conditions[i], 
+    ggsave(plot, file=paste("outputs/protein_", conditions[i], 
                             "_BH_adjusted_pv_volcano.pdf", sep=''), scale=2)
     
     # Changing the limma_adjust to none seems to have little to no effect on the result, which is why this code is currently commented out.
@@ -188,5 +180,6 @@ save(collection, file="collection.Rda")
 # Enrichment
 genesetnetwork = setRankAnalysis(entrezsortedFG, collection, use.ranks = TRUE, setPCutoff = 0.01, fdrCutoff = 0.05)
 exportSingleResult(genesetnetwork, entrezsortedFG, collection, "genesetnetwork")
-plot.igraph(genesetnetwork)
+plot <- plot.igraph(genesetnetwork)
+ggsave(plot, file="outputs/protein_enrichments.pdf", scale=2)
 
