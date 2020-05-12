@@ -38,7 +38,7 @@ The following are commands to run IN THE CONSOLE OF RSTUDIO. The ">" key will be
 4. There MUST be the evidence file for the PHOSPHORYLATED peptides, called "evidence.txt" INSIDE "data".
 5. There MUST be the protein groups file for the PROTEINS, called "proteinGroups.txt" INSIDE "data".
 6. There may or may not be a folder called "outputs". If it does not already exist, it will be created for you.
-7. Inside each R file "ProteinWorkflow.R", and "PeptideWorkflow.R", you must set your base directory. Details on how to do this are at the top of both files.
+
 
 ## SECTION 2: GeneSets
 ### Generate GeneSets, and ensure they are up-to-date.
