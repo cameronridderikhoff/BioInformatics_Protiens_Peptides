@@ -28,6 +28,8 @@ The following are commands to run IN THE CONSOLE OF RSTUDIO. The ">" key will be
 8. biocLite("SetRank")
 9. biocLite("biomaRt)
 
+### You must create an environment variable for Rscript, to do this in Windows, press the Windows button, then type "env" and click on "Edit the system environment variables", click on "Environment Variables...", then, under System variables, find "Path" or "PATH", and click "Edit...". Then add the path that Rscript.exe is found in, usually "C:\Program Files\R\R-3.XX\bin\i386". Click Ok, Click Ok, Click Ok. See http://softwaresaved.github.io/distance-consultancy/develop/SetUpDevelopmentR.html for more details.
+
 
 If you are doing PTM analysis, open PTM_README.md
 
