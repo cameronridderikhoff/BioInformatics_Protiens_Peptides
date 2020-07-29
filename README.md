@@ -12,6 +12,7 @@ To use this set of functions:
 3. "cd" into the GeneSets folder and open the "organisms" file.
 4. Delete everything in this file, and create a single line:Arabidopsis thaliana
 5. In the terminal, type the command "make" to generate the arabidopsis files.
+This may not work for Windows machines, so ensure you read the SetRank vignette to determine how to use SetRank for your machine.
 
 ## Section 0: Pre-setup
 ### This section is mostly for Glen, to ensure the R libaries are all installed.
@@ -31,14 +32,15 @@ The following are commands to run IN THE CONSOLE OF RSTUDIO. The ">" key will be
 ## Section 1: Windows vs. Mac vs. Linux
 If you are performing your analysis on a Windows machine, there are a couple of steps you have to follow to convert this code-base into something that will be compatable with Windows. If you are on a Mac, you shouldn't have to do any other steps. If you are on a Linux machine then you may have to set up environment variables for R (step 1 below), but this program has not been tested on a Linux machine, so there may be further issues.
 1. You must create an environment variable for Rscript, to do this in Windows, press the Windows button, then type "env" and click on "Edit the system environment variables", click on "Environment Variables...", then, under System variables, find "Path" or "PATH", and click "Edit...". Then add the path that Rscript.exe is found in, usually "C:\Program Files\R\R-3.XX\bin\i386". Click Ok, Click Ok, Click Ok. See http://softwaresaved.github.io/distance-consultancy/develop/SetUpDevelopmentR.html for more details.
-2. You must change line 10 of run_protein_workflow.py from:
-return_code = subprocess.call("Rscript --vanilla -e 'source(\"ProteinWorkflow.R\")'" + R_args, shell=True)
-to
-return_code = subprocess.call("Rscript ProteinWorkflow.R" + R_args, shell=True)
-3. You must change line 14 of run_peptide_workflow.py from: 
-return_code = subprocess.call("Rscript --vanilla -e 'source(\"PeptideWorkflow.R\")'" + R_args, shell=True)
-to
-return_code = subprocess.call("Rscript PeptideWorkflow.R" + R_args, shell=True)
+2. You must change line 10 of run_protein_workflow.py to: return_code = subprocess.call("Rscript ProteinWorkflow.R" + R_args, shell=True)
+3. You must change line 28 of ProteinWorkflow.R to: conditions <- args[-(1:7)]
+4. You must change line 29 of ProteinWorkflow.R to: control_condition <- args[10]
+5. You must change line 30 of ProteinWorkflow.R to: num_samples <- strtoi(args[6])
+6. You must change line 14 of run_peptide_workflow.py to: return_code = subprocess.call("Rscript PeptideWorkflow.R" + R_args, shell=True)
+7. You must change line 26 of PeptideWorkflow.R to: conditions <- args[-(1:7)]
+8. You must change line 27 of PeptideWorkflow.R to: control_condition <- args[10]
+9. You must change line 28 of PeptideWorkflow.R to: num_samples <- strtoi(args[6])
+If you still cannot make the program run, please contact me at ridderik@ualberta.ca
 
 ## Next Steps:
 If you are doing PTM analysis, open PTM_README.md
