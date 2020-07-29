@@ -4,7 +4,7 @@ import subprocess
 import create_metadata_file as cmf # import the create_metadata_file.py methods so that we can call it from this file
 
 # Create the metadata file, and get the arguments that we need to send into ProteusWorkflow.R
-R_args = cmf.create_metadata_file()
+R_args = cmf.create_metadata_file("data_prot/")
 
 # Use subprocess to run the ProteusWorkflow.R script 
 return_code = subprocess.call("Rscript --vanilla -e 'source(\"ProteinWorkflow.R\")'" + R_args, shell=True)
