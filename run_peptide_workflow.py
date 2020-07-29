@@ -8,7 +8,7 @@ import remove_useless_peptides as rup
 rup.remove_useless_peptides("data/Phospho (STY)Sites.txt")
 
 # Create the metadata file, and get the arguments that we need to send into PeptideWorkflow.R
-R_args = cmf.create_metadata_file()
+R_args = cmf.create_metadata_file("data_pep/")
 
 # Use subprocess to run the ProteusWorkflow.R script 
 return_code = subprocess.call("Rscript --vanilla -e 'source(\"PeptideWorkflow.R\")'" + R_args, shell=True)

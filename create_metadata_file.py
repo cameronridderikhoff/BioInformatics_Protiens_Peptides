@@ -4,9 +4,9 @@ import re # for regular expressions
 # @input: N/A
 # @output: R_args - a vector containing valuable information that the ProteusWorkflow.R script needs. 
 #          It is of the form: [num_samples, control_condition, condition1, condition2, ..., conditionX]
-def create_metadata_file():
+def create_metadata_file(directory):
     # Generate the file if it does not exist, or overwrite the data that is there already
-    meta = open("data/meta.txt", 'w')
+    meta = open(directory + "meta.txt", 'w')
     # Proteus requires the first row to be exactly like this:
     # experiment   measure   sample   condition
     meta.write("experiment\tmeasure\tsample\tcondition\n")
